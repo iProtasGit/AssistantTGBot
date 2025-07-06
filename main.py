@@ -1,84 +1,39 @@
+import asyncio
 import logging
 import logging.config
-from aiogram import Bot, Dispatcher, F
-from aiogram.filters import CommandStart
-from aiogram.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, Message)
+from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 import yaml
 
 from config.config import load_config
+# from keyboards.set_menu import set_main_menu
+
+from handlers import user
  
+async def main(): 
+    with open('config/logging_config.yaml', 'rt') as f:
+        log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+    logger = logging.getLogger(__name__)
 
-config = load_config()
-BOT_TOKEN = config.bot.token
+    config = load_config()
 
-with open('config/logging_config.yaml', 'rt') as f:
-    log_config = yaml.safe_load(f.read())
-logging.config.dictConfig(log_config)
-logger = logging.getLogger(__name__)
+    logger.info('Starting bot')
+    bot = Bot(
+        config.bot.token,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    dp = Dispatcher()
 
+    # await set_main_menu(bot)
 
-# Создаем объекты бота и диспетчера
-config = load_config()
+    logger.info('Connecting routers')
+    dp.include_routers(user.router)
 
-logger.debug('Running Bot')
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
+    logger.info('Connecting middlewares')
 
-# Создаем объекты инлайн-кнопок
-big_button_1 = InlineKeyboardButton(
-    text='БОЛЬШАЯ КНОПКА 1',
-    callback_data='big_button_1_pressed'
-)
-
-big_button_2 = InlineKeyboardButton(
-    text='БОЛЬШАЯ КНОПКА 2',
-    callback_data='big_button_2_pressed'
-)
-
-# Создаем объект инлайн-клавиатуры
-keyboard = InlineKeyboardMarkup(
-    inline_keyboard=[[big_button_1],
-                     [big_button_2]])
-
-
-# Этот хэндлер будет срабатывать на команду "/start"
-# и отправлять в чат клавиатуру с инлайн-кнопками
-@dp.message(CommandStart())
-async def process_start_command(message: Message):
-    logger.error("ALERT TEST")
-    await message.answer(
-        text='Это инлайн-кнопки. Нажми на любую!',
-        reply_markup=keyboard
-    )
-
-
-# Этот хэндлер будет срабатывать на апдейт типа CallbackQuery
-# с data 'big_button_1_pressed'
-@dp.callback_query(F.data == 'big_button_1_pressed')
-async def process_button_1_press(callback: CallbackQuery):
-    if callback.message.text != 'Была нажата БОЛЬШАЯ КНОПКА 1': # type: ignore
-        await callback.message.edit_text( # type: ignore
-            text='Была нажата БОЛЬШАЯ КНОПКА 1',
-            reply_markup=callback.message.reply_markup) # type: ignore
-    await callback.answer(
-        text='Ура! Нажата кнопка 1',
-        show_alert=True
-    )
-
-
-# Этот хэндлер будет срабатывать на апдейт типа CallbackQuery
-# с data 'big_button_2_pressed'
-@dp.callback_query(F.data == 'big_button_2_pressed')
-async def process_button_2_press(callback: CallbackQuery):
-    if callback.message.text != 'Была нажата БОЛЬШАЯ КНОПКА 2': # type: ignore
-        await callback.message.edit_text( # type: ignore
-            text='Была нажата БОЛЬШАЯ КНОПКА 2',
-            reply_markup=callback.message.reply_markup # type: ignore
-        )
-    await callback.answer(text='Ура! Нажата кнопка 2')
-
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    dp.run_polling(bot)
-    
+    asyncio.run(main())
