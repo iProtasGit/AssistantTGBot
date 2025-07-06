@@ -1,0 +1,53 @@
+version: 1
+disable_existing_loggers: True
+# TODO: add handler which sending critical logs to admins tg account
+
+formatters:
+  default:
+    format: '[{asctime}] #{levelname:8} {filename}:{lineno} - {name}:{funcName} - {message}'
+    style: '{'
+  info_debug:
+    format: '[{asctime}] #{levelname:8} {name}:{funcName} - {message}'
+    style: '{'
+
+filters:
+  error_critical_filter:
+    (): config.logger_filters.ErrorCriticalLogFilter
+  debug_info_filter:
+    (): config.logger_filters.DebugInfoLogFilter
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: default
+    stream: ext://sys.stderr
+
+  stdout:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: info_debug
+    filters: [debug_info_filter]
+    stream: ext://sys.stdout
+
+  error_file:
+    class: logging.FileHandler
+    filename: logs/error.log
+    mode: a
+    level: ERROR
+    formatter: default
+    filters: [error_critical_filter]
+
+loggers:
+  OnFuture:
+    level: DEBUG
+    handlers: [stdout]
+    propagate: false
+  OnFuture2:
+    level: ERROR
+    handlers: [error_file, console]
+    propagate: false
+
+root:
+  level: DEBUG
+  handlers: [console, error_file]

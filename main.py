@@ -1,17 +1,27 @@
+import logging
+import logging.config
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
+import yaml
 
 from config.config import load_config
  
-# Вместо BOT TOKEN HERE нужно вставить токен вашего бота,
-# полученный у @BotFather
+
 config = load_config()
 BOT_TOKEN = config.bot.token
 
+with open('config/logging_config.yaml', 'rt') as f:
+    log_config = yaml.safe_load(f.read())
+logging.config.dictConfig(log_config)
+logger = logging.getLogger(__name__)
+
+
 # Создаем объекты бота и диспетчера
 config = load_config()
+
+logger.debug('Running Bot')
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
@@ -36,6 +46,7 @@ keyboard = InlineKeyboardMarkup(
 # и отправлять в чат клавиатуру с инлайн-кнопками
 @dp.message(CommandStart())
 async def process_start_command(message: Message):
+    logger.error("ALERT TEST")
     await message.answer(
         text='Это инлайн-кнопки. Нажми на любую!',
         reply_markup=keyboard
