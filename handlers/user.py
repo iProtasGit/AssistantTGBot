@@ -1,8 +1,10 @@
 import logging
-from aiogram import Router
-from aiogram.filters import Command, CommandStart
+from aiogram import Router, F
+from aiogram.filters import Command, CommandStart, or_f
 from aiogram.types import Message
+
 from lexicon.lexicon_ru import user
+from keyboards.start_keyboard import yes_help_kb, weather_yes_no_kb
 
 router = Router()
 logger = logging.getLogger('OnFuture')
@@ -10,12 +12,22 @@ logger = logging.getLogger('OnFuture')
 @router.message(CommandStart())
 async def process_start_command(message: Message):
     logger.info('Start command')
-    await message.answer(text=user['start'])
+    await message.answer(text=user['start'], reply_markup=yes_help_kb)
     
-@router.message(Command(commands='help'))
+@router.message(or_f(Command(commands='help'), F.text == user['button']['help']))
 async def process_help_command(message: Message):
     logger.info('Help command')
     await message.answer(text=user['help'])
+    
+@router.message(F.text == user['button']['yes'])
+async def process_yes_button(message: Message):
+    logger.info('Start yes button')
+    await message.answer(text=user['ready'], reply_markup=weather_yes_no_kb)
+    
+@router.message(F.text == user['button']['weather_no'])
+async def process_weather_no_button(message: Message):
+    logger.info('Weather no button')
+    await message.answer(text=user['no_weather'])
     
 @router.message()
 async def send_echo(message: Message):
