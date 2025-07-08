@@ -1,13 +1,14 @@
 import asyncio
 import logging
+import yaml
 import logging.config
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-import yaml
+
 
 from config.config import load_config
-# from keyboards.set_menu import set_main_menu
+from keyboards.set_menu import set_main_menu
 
 from handlers import user
  
@@ -25,7 +26,7 @@ async def main():
         default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
 
-    # await set_main_menu(bot)
+    await set_main_menu(bot)
 
     logger.info('Connecting routers')
     dp.include_routers(user.router)
