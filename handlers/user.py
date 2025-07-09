@@ -1,10 +1,11 @@
 import logging
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart, or_f
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from lexicon.lexicon_ru import user
 from keyboards.start_keyboard import yes_help_kb, weather_yes_no_kb
+from keyboards.settings_inline_keyboard import settings_kb
 
 router = Router()
 logger = logging.getLogger('OnFuture')
@@ -18,6 +19,19 @@ async def process_start_command(message: Message):
 async def process_help_command(message: Message):
     logger.info('Help command')
     await message.answer(text=user['help'])
+    
+@router.message(Command('settings'))
+async def process_settings(message: Message):
+    logger.info('Settings command')
+    await message.answer(text=user['settings'], reply_markup=settings_kb)
+    
+@router.callback_query(F.data == user['inline_buttons']['turn_on_weather'])
+async def process_turn_on_weather_button_click(callback: CallbackQuery):
+    await callback.answer(text='Погода включена') # TODO: Вынести в lexicon
+    
+@router.callback_query(F.data == user['inline_buttons']['turn_off_weather'])
+async def process_turn_off_weather_button_click(callback: CallbackQuery):
+    await callback.answer(text='Погода выключена') # TODO: Вынести в lexicon
     
 @router.message(F.text == user['button']['yes'])
 async def process_yes_button(message: Message):
