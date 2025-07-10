@@ -19,10 +19,6 @@ user = {
         'weather_yes': 'Да',
         'weather_no': 'Нет'
     },
-    'inline_buttons': {
-        'turn_on_weather': 'Включить погоду',
-        'turn_off_weather': 'Выключить погоду'
-    },
     'settings': 'Добро пожаловать в настройки!\n\n'
                 'Здесь вы можете включить или выключить разные функции бота'
 }
@@ -32,4 +28,23 @@ main_menu: dict[str, str] = {
     '/help': 'Помощь с работой в боте',
     '/settings': 'Открыть настройки бота'
 }
+
+settings = {
+        'turn_on_weather': {
+            'text': 'Включить погоду',
+            'callback_data': 'turn_on_weather',
+            },
+        'turn_off_weather': {
+            'text': 'Выключить погоду',
+            'callback_data': 'turn_off_data'
+            },
+        'call_developer': {
+            'text': 'Обратиться за помощью',
+            'url': 'https://t.me/iProtas'
+        },
+        'answers': {
+            'turn_on_weather': 'Погода включена!',
+            'turn_off_weather': 'Погода выключена!'
+        }
+    }
 
