@@ -9,6 +9,9 @@ from aiogram.enums import ParseMode
 
 from config.config import load_config
 from keyboards.set_menu import set_main_menu
+from lexicon.lexicon_ru import user_ru
+from lexicon.lexicon_en import user_en
+from middlewares.i18n import TranslatorMiddleware
 
 from handlers import user
  
@@ -19,6 +22,12 @@ async def main():
     logger = logging.getLogger(__name__)
 
     config = load_config()
+    
+    translations = {
+        'default': 'ru',
+        'ru': user_ru,
+        'en': user_en
+    }
 
     logger.info('Starting bot')
     bot = Bot(
@@ -32,6 +41,10 @@ async def main():
     dp.include_routers(user.router)
 
     logger.info('Connecting middlewares')
+    dp.update.middleware(TranslatorMiddleware())
+    
+    dp.workflow_data.update(translations=translations)
+    
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

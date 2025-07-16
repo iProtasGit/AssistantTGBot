@@ -1,23 +1,23 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from lexicon.lexicon_ru import settings
+from lexicon.lexicon_ru import user_ru
 
 kb_builder = InlineKeyboardBuilder()
 
 buttons: list[InlineKeyboardButton] = []
 
 buttons.append(InlineKeyboardButton(
-    text=settings['turn_on_weather']['text'],
-    callback_data=settings['turn_on_weather']['callback_data']
+    text=user_ru['inline_buttons']['turn_on_weather']['text'],
+    callback_data=user_ru['inline_buttons']['turn_on_weather']['callback_data']
 ))
 buttons.append(InlineKeyboardButton(
-    text=settings['turn_off_weather']['text'],
-    callback_data=settings['turn_off_weather']['callback_data']
+    text=user_ru['inline_buttons']['turn_off_weather']['text'],
+    callback_data=user_ru['inline_buttons']['turn_off_weather']['callback_data']
 ))
 buttons.append(InlineKeyboardButton(
-    text=settings['call_developer']['text'],
-    url=settings['call_developer']['url']
+    text=user_ru['inline_buttons']['call_developer']['text'],
+    url=user_ru['inline_buttons']['call_developer']['url']
 ))
 
        
