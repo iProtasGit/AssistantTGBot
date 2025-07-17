@@ -13,7 +13,7 @@ class TranslatorMiddleware(BaseMiddleware):
         data: dict[str, Any]
         ) -> Any:
         
-        logger = getLogger(__name__) 
+        logger = getLogger('OnFuture') 
         
         user: User = data.get('event_from_user')
         
@@ -28,5 +28,5 @@ class TranslatorMiddleware(BaseMiddleware):
             data['i18n'] = translations[translations['default']]
         else:
             data['i18n'] = i18n
-        logger.info(f'Selected language: {data["i18n"]}')
+        logger.info(f'User language: {user_lang}')
         return await handler(event, data)

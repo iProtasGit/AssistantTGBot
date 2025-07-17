@@ -34,14 +34,14 @@ handlers:
     class: logging.FileHandler
     filename: logs/error.log
     mode: a
-    level: ERROR
+    level: WARNING
     formatter: default
     filters: [error_critical_filter]
 
 loggers:
   OnFuture:
     level: DEBUG
-    handlers: [stdout]
+    handlers: [stdout, error_file]
     propagate: false
   OnFuture2:
     level: ERROR

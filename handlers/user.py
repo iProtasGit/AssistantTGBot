@@ -26,8 +26,8 @@ async def process_help_command(message: Message, i18n):
     
 @router.message(Command('settings'))
 async def process_settings(message: Message, i18n):
-    logger.info('Settings command')
-    await message.answer(text=i18n['settings'], reply_markup=settings_kb)
+    logger.info(f'Settings command {i18n["commands"]["settings"]}')
+    await message.answer(text=i18n['commands']['settings'], reply_markup=settings_kb)
     
     
 @router.callback_query(

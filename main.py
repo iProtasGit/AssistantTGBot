@@ -12,8 +12,9 @@ from keyboards.set_menu import set_main_menu
 from lexicon.lexicon_ru import user_ru
 from lexicon.lexicon_en import user_en
 from middlewares.i18n import TranslatorMiddleware
+from middlewares.is_admin import IsAdminMiddleware
 
-from handlers import user
+from handlers import user, admin
  
 async def main(): 
     with open('config/logging_config.yaml', 'rt') as f:
@@ -38,12 +39,14 @@ async def main():
     await set_main_menu(bot)
 
     logger.info('Connecting routers')
-    dp.include_routers(user.router)
+    dp.include_router(admin.router)
+    dp.include_router(user.router)
 
     logger.info('Connecting middlewares')
+    admin.router.message.outer_middleware(IsAdminMiddleware())
     dp.update.middleware(TranslatorMiddleware())
     
-    dp.workflow_data.update(translations=translations)
+    dp.workflow_data.update(translations=translations, admins=config.admin_ids.ids)
     
 
     await bot.delete_webhook(drop_pending_updates=True)
