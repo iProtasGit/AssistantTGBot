@@ -20,9 +20,6 @@ class Config:
 def load_config(path: str | None = None) -> Config:
     env = Env()
     env.read_env(path)
-    logger.debug('initialized config file')
-    logger.debug(f"Raw ADMIN_IDS: {env('ADMIN_IDS')}")
-    logger.debug(f"Parsed ADMIN_IDS: {env.list('ADMIN_IDS', subcast=int)}")
     return Config(
         bot=Tg_bot(token=env('BOT_TOKEN')),
         admin_ids=Admins(ids=env.list('ADMIN_IDS', subcast=int, delimiter=','))    
