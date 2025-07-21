@@ -2,9 +2,13 @@ import asyncio
 import logging
 import yaml
 import logging.config
+
+from redis.asyncio import Redis
+
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.fsm.storage.redis import RedisStorage
 
 
 from config.config import load_config
@@ -30,11 +34,15 @@ async def main():
         'en': user_en
     }
 
+    logger.info("Starting Redis")
+    redis = Redis(host='localhost')
+    storage = RedisStorage(redis=redis)
+
     logger.info('Starting bot')
     bot = Bot(
         config.bot.token,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
 
     await set_main_menu(bot)
 

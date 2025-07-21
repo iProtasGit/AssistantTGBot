@@ -21,6 +21,9 @@ class TranslatorMiddleware(BaseMiddleware):
             return await handler(event, data)
         
         user_lang = user.language_code
+
+        user_lang = 'ru' #for tests
+
         translations = data.get('translations')
         
         i18n = translations.get(user_lang)
