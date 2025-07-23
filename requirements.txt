@@ -12,7 +12,11 @@ frozenlist==1.7.0
 idna==3.10
 magic-filter==1.0.12
 marshmallow==4.0.0
+msgspec==0.19.0
 multidict==6.6.0
+mypy==1.17.0
+mypy_extensions==1.1.0
+pathspec==0.12.1
 propcache==0.3.2
 pydantic==2.11.7
 pydantic_core==2.33.2
@@ -20,6 +24,7 @@ python-dotenv==1.1.1
 PyYAML==6.0.2
 redis==6.2.0
 requests==2.32.4
+types-PyYAML==6.0.12.20250516
 typing-inspection==0.4.1
 typing_extensions==4.14.0
 urllib3==2.5.0

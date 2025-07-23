@@ -64,5 +64,9 @@ docs/html
 # pynev
 .python-version
 
+# MYPY cash
+.mypy_cache/
+
+# Internal files
 .env
 logs/*.log

@@ -13,23 +13,31 @@ class TranslatorMiddleware(BaseMiddleware):
         data: dict[str, Any]
         ) -> Any:
         
-        logger = getLogger('OnFuture') 
+        log = getLogger(__name__) 
+
+        log.debug("TranslatorMiddleware called")
         
-        user: User = data.get('event_from_user')
+        user: User | None = data.get("event_from_user") 
         
         if user is None:
             return await handler(event, data)
         
-        user_lang = user.language_code
+        user_lang: str | None = user.language_code
 
-        user_lang = 'ru' #for tests
+        if user_lang is None:
+            user_lang = "en"
 
-        translations = data.get('translations')
+        translations: dict[str, dict] = data.get("translations") # type: ignore
+
+        i18n: str = translations.get(user_lang) # type: ignore
+
+        match i18n:
+            case 'ru':
+                data["i18n"] = translations.get("ru") # type: ignore
+            case '!en': # temporarily unavailable
+                data["i18n"] = translations.get("ru") # type: ignore
+            case _:
+                log.warning(f"Unsupported language '{user_lang}', using default")
+                data["i18n"] = translations.get("ru") # type: ignore
         
-        i18n = translations.get(user_lang)
-        if i18n is None:
-            data['i18n'] = translations[translations['default']]
-        else:
-            data['i18n'] = i18n
-        logger.info(f'User language: {user_lang}')
         return await handler(event, data)

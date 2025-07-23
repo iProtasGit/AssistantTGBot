@@ -5,57 +5,34 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from lexicon.lexicon_ru import user_ru
 
-logger = getLogger('OnFuture')
+log = getLogger(__name__)
 
-# def create_new_inline_kb(
-#     width: int,
-#     *args: str,
-#     **kwargs: str) -> InlineKeyboardMarkup:
-    
-#     kb_builder = InlineKeyboardBuilder()
-    
-#     buttons: list[InlineKeyboardButton] = []
-    
-#     if args:
-#         for button in args:
-#             buttons.append(InlineKeyboardButton(
-#                 text=inline_buttons[button] if button in inline_buttons else button,  # type: ignore
-#                 callback_data=button
-#         ))
-#     if kwargs:
-#         for button, text in kwargs.items():
-#             buttons.append(InlineKeyboardButton(
-#                 text=text,
-#                 callback_data=button
-#             ))
-    
-#     kb_builder.row(*buttons, width=width)
-    
-#     return kb_builder.as_markup() 
 
 def use_inline_keyboard(
     width: int,
     name: str
-    ) -> InlineKeyboardMarkup:
+    ) -> InlineKeyboardMarkup | None:
     
     kb_builder = InlineKeyboardBuilder()
     
     buttons: list[InlineKeyboardButton] = []
-    
 
+    if user_ru["inline_buttons"].get(name) is None:
+        log.error(f"Inline buttons for '{name}' not found in lexicon.")
+        return None
     
-    for button, text in user_ru['inline_buttons'][name].items():
-        if button[0:4] != 'url:':
+    for button, text in user_ru["inline_buttons"][name].items():
+        if button.startswith("url:"):
             buttons.append(InlineKeyboardButton(
-                text = text,
-                callback_data= button
+                text=text,
+                url=button[4:]
             ))
         else:
             buttons.append(InlineKeyboardButton(
-                text = text,
-                url = button[4:]
+                text=text,
+                callback_data=button
             ))
-    
+            
     kb_builder.row(*buttons, width=width)
     
     return kb_builder.as_markup()

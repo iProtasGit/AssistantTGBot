@@ -1,3 +1,3 @@
-user_en = {
+user_en: dict = {
     
 }

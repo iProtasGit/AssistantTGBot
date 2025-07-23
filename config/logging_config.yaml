@@ -39,15 +39,11 @@ handlers:
     filters: [error_critical_filter]
 
 loggers:
-  OnFuture:
+  __main__:
     level: DEBUG
     handlers: [stdout, error_file]
-    propagate: false
-  OnFuture2:
-    level: ERROR
-    handlers: [error_file, console]
     propagate: false
 
 root:
   level: DEBUG
-  handlers: [console, error_file]
+  handlers: [stdout, error_file]
