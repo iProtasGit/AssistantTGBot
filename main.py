@@ -41,7 +41,11 @@ async def main():
     }
 
     log.info("Starting Redis")
-    redis = Redis(host="localhost")
+    try:
+        redis = Redis(host="localhost")
+    except Exception as e:
+        log.error(f"Failed to connect to Redis: {e}")
+        raise ConnectionError("Redis connection failed. Please check your Redis server.")
     storage = RedisStorage(redis=redis)
 
     weather_api = WeatherAPI(cfg.api.weather_api.weather_key)
